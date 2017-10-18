@@ -9,6 +9,7 @@
   "author": "dave@testdouble.com",
   "license": "ISC",
   "dependencies": {
+    "decimal.js": "^7.3.0",
     "express": "~4.0.0",
     "request": "~2.34.0"
   },
