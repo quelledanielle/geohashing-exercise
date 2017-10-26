@@ -1,7 +1,7 @@
 express = require('express');
 app     = express();
 
-const dowOpening = require('./lib/dow_opening');
+const DowData = require('./lib/dow_data');
 const geohash = require('./lib/geohash');
 
 app.get('/geohash', function(req, res, next) {
@@ -9,13 +9,17 @@ app.get('/geohash', function(req, res, next) {
     res.json(data);
   };
 
-  let date = new Date();
-  let dateString = date.toLocaleDateString();
-  let opening = dowOpening(require('./spec/support/dow.json'));
-  let dateOpening = `#{dateString}-#{opening}`;
+  let dowData = new DowData();
+  dowData.fetchJson().then((json) => {
+    let date = new Date();
+    let dateString = date.toLocaleDateString();
 
-  let geohashed = geohash(req.query.lat, req.query.lon, dateOpening, respond);
-  res.status(200).send(geohashed);
+    let open = DowData.open(json);
+    let dateOpenString = `#{dateString}-#{open}`;
+
+    let geohashed = geohash(req.query.lat, req.query.lon, dateOpenString, respond);
+    res.status(200).send(geohashed);
+  }, console.error);
 });
 
 console.log("api listening on 8000");
